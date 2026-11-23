@@ -3,6 +3,12 @@ using UnityEngine;
 public class CombateJogador : MonoBehaviour
 {
     [SerializeField] private GerenciadorPartida partida;
+    [SerializeField] private string nome = "Jogador 1";
+    [SerializeField] private Color corNome = Color.white;
+
+    public string Nome => nome;
+    public Color CorNome => corNome;
+    public float DuracaoMorte => GetComponent<AnimacaoPersonagem>().DuracaoMorte;
 
     public ArmaJogador Arma { get; private set; }
 
@@ -48,5 +54,11 @@ public class CombateJogador : MonoBehaviour
         corpo.simulated = false;
 
         Arma.RemoverFaca();
+    }
+
+        public void Morrer()
+    {
+        Parar();
+        GetComponent<AnimacaoPersonagem>().TocarMorte();
     }
 }

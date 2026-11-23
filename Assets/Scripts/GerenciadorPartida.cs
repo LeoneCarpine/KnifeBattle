@@ -1,9 +1,11 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GerenciadorPartida : MonoBehaviour
 {
+    [SerializeField] private float pausaAntesDoResultado = 0.5f;
     [SerializeField] private GameObject painelResultado;
     [SerializeField] private TMP_Text textoVencedor;
     private bool partidaEncerrada;
@@ -45,16 +47,24 @@ public class GerenciadorPartida : MonoBehaviour
         }
     }
 
-    private void EncerrarPartida(CombateJogador vencedor, CombateJogador perdedor)
+        private void EncerrarPartida(CombateJogador vencedor, CombateJogador perdedor)
     {
         partidaEncerrada = true;
 
         vencedor.Parar();
-        perdedor.Parar();
+        perdedor.Morrer();
 
-        perdedor.gameObject.SetActive(false);
+        float espera = perdedor.DuracaoMorte + pausaAntesDoResultado;
+        StartCoroutine(MostrarResultado(vencedor, espera));
+    }
 
-        textoVencedor.text = vencedor.gameObject.name + " venceu!";
+    private IEnumerator MostrarResultado(CombateJogador vencedor, float espera)
+    {
+        // deixa a animação de morte terminar antes de cobrir a tela
+        yield return new WaitForSeconds(espera);
+
+        string cor = ColorUtility.ToHtmlStringRGB(vencedor.CorNome);
+        textoVencedor.text = $"<color=#{cor}>{vencedor.Nome}</color>\nVENCEU!";
         painelResultado.SetActive(true);
     }
     public void ReiniciarPartida()

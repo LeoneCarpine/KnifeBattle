@@ -19,6 +19,11 @@ public class AnimacaoPersonagem : MonoBehaviour
     [SerializeField] private int colunasAndando = 6;
     [SerializeField] private float fpsAndando = 10f;
 
+    [Header("Morte (Death)")]
+    [SerializeField] private Sprite[] corpoMorte;
+    [SerializeField] private int colunasMorte = 7;
+    [SerializeField] private float fpsMorte = 8f;
+
     // linhas da spritesheet: 0 = frente, 1 = esquerda, 2 = direita, 3 = costas
     private const int Frente = 0, Esquerda = 1, Direita = 2, Costas = 3;
 
@@ -27,6 +32,10 @@ public class AnimacaoPersonagem : MonoBehaviour
     private int quadro;
     private float cronometro;
     private bool estavaAndando;
+    private bool morto;
+
+    // quanto tempo a animação de morte leva: 7 quadros a 8 por segundo = 0,875 s
+    public float DuracaoMorte => colunasMorte / fpsMorte;
 
     void Awake()
     {
@@ -37,10 +46,17 @@ public class AnimacaoPersonagem : MonoBehaviour
         OrdenarPorPosicao(espadaParado);
         OrdenarPorPosicao(corpoAndando);
         OrdenarPorPosicao(espadaAndando);
+        OrdenarPorPosicao(corpoMorte);
     }
 
     void Update()
     {
+        if (morto)
+        {
+            AnimarMorte();
+            return;
+        }
+
         Vector2 velocidade = fisica.linearVelocity;
         bool andando = velocidade.sqrMagnitude > 0.01f;
 
@@ -82,6 +98,34 @@ public class AnimacaoPersonagem : MonoBehaviour
         // olhando pra esquerda ou pra cima, a espada fica atrás do corpo
         bool espadaAtras = linha == Esquerda || linha == Costas;
         espada.sortingOrder = espadaAtras ? corpo.sortingOrder - 1 : corpo.sortingOrder + 1;
+    }
+
+    public void TocarMorte()
+    {
+        morto = true;
+        quadro = 0;
+        cronometro = 0f;
+        espada.gameObject.SetActive(false);
+    }
+
+    private void AnimarMorte()
+    {
+        // usa a mesma linha (direção) em que o personagem estava olhando
+        int inicio = linha * colunasMorte;
+        corpo.sprite = corpoMorte[inicio + quadro];
+
+        // chegou no último quadro? para aqui, caído (sem loop)
+        if (quadro >= colunasMorte - 1)
+        {
+            return;
+        }
+
+        cronometro += Time.deltaTime;
+        if (cronometro >= 1f / fpsMorte)
+        {
+            cronometro -= 1f / fpsMorte;
+            quadro++;
+        }
     }
 
     private int CalcularLinha(Vector2 v)
