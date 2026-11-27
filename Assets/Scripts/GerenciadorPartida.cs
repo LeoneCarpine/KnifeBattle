@@ -10,6 +10,11 @@ public class GerenciadorPartida : MonoBehaviour
     [SerializeField] private TMP_Text textoVencedor;
     private bool partidaEncerrada;
     public bool Encerrada => partidaEncerrada;
+    [Header("Sons")]
+    [SerializeField] private AudioSource fonteSom;
+    [SerializeField] private AudioClip somGolpe;
+    [SerializeField] private AudioClip somMorte;
+    [SerializeField] private AudioClip somFacasAnuladas;
 
     void Awake()
     {
@@ -33,7 +38,7 @@ public class GerenciadorPartida : MonoBehaviour
             jogadorA.Arma.RemoverFaca();
             jogadorB.Arma.RemoverFaca();
 
-            Debug.Log("As facas se anularam!");
+            Tocar(somFacasAnuladas);
             return;
         }
 
@@ -60,7 +65,12 @@ public class GerenciadorPartida : MonoBehaviour
         bool morreu = alvo.Vida.TomarDano();
         if (morreu)
         {
+            Tocar(somMorte);
             EncerrarPartida(atacante, alvo);
+        }
+        else
+        {
+            Tocar(somGolpe);
         }
     }
 
@@ -92,5 +102,14 @@ public class GerenciadorPartida : MonoBehaviour
     public void VoltarAoMenu()
     {
         SceneManager.LoadScene("MenuInicial");
+    }
+
+    private void Tocar(AudioClip som)
+    {
+        // se algum campo ficou vazio no Inspector, só não toca (sem dar erro)
+        if (fonteSom != null && som != null)
+        {
+            fonteSom.PlayOneShot(som);
+        }
     }
 }
