@@ -8,6 +8,8 @@ public class ArmaJogador : MonoBehaviour
     private float tempoRestante;
 
     public bool TemFaca { get; private set; }
+    // de 1 (acabou de pegar) até 0 (vai sumir)
+    public float FracaoRestante => TemFaca ? tempoRestante / duracaoFaca : 0f;
 
     void Awake()
     {

@@ -39,15 +39,32 @@ public class GerenciadorPartida : MonoBehaviour
 
         if (aTemFaca)
         {
-            EncerrarPartida(jogadorA, jogadorB);
+            Golpear(jogadorA, jogadorB);
         }
         else if (bTemFaca)
         {
-            EncerrarPartida(jogadorB, jogadorA);
+            Golpear(jogadorB, jogadorA);
         }
     }
 
-        private void EncerrarPartida(CombateJogador vencedor, CombateJogador perdedor)
+    private void Golpear(CombateJogador atacante, CombateJogador alvo)
+    {
+        // alvo ainda piscando: o golpe não conta, e o atacante continua com a faca
+        if (alvo.Vida.Invencivel)
+        {
+            return;
+        }
+
+        atacante.Arma.RemoverFaca();
+
+        bool morreu = alvo.Vida.TomarDano();
+        if (morreu)
+        {
+            EncerrarPartida(atacante, alvo);
+        }
+    }
+
+    private void EncerrarPartida(CombateJogador vencedor, CombateJogador perdedor)
     {
         partidaEncerrada = true;
 

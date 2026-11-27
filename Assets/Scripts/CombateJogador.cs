@@ -9,12 +9,13 @@ public class CombateJogador : MonoBehaviour
     public string Nome => nome;
     public Color CorNome => corNome;
     public float DuracaoMorte => GetComponent<AnimacaoPersonagem>().DuracaoMorte;
-
     public ArmaJogador Arma { get; private set; }
+    public VidaJogador Vida { get; private set; }
 
     void Awake()
     {
         Arma = GetComponent<ArmaJogador>();
+        Vida = GetComponent<VidaJogador>();
     }
 
     void OnCollisionEnter2D(Collision2D colisao)
