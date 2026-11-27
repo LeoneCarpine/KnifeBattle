@@ -16,6 +16,10 @@ public class GerenciadorPartida : MonoBehaviour
     [SerializeField] private AudioClip somMorte;
     [SerializeField] private AudioClip somFacasAnuladas;
 
+    [Header("Empurrão")]
+    [SerializeField] private float forcaEmpurrao = 10f;     // velocidade inicial do empurrão
+    [SerializeField] private float duracaoEmpurrao = 0.2f;  // quanto tempo ele dura
+
     void Awake()
     {
         partidaEncerrada = false;
@@ -39,6 +43,8 @@ public class GerenciadorPartida : MonoBehaviour
             jogadorB.Arma.RemoverFaca();
 
             Tocar(somFacasAnuladas);
+            Empurrar(jogadorA, jogadorB);
+            Empurrar(jogadorB, jogadorA);
             return;
         }
 
@@ -71,7 +77,15 @@ public class GerenciadorPartida : MonoBehaviour
         else
         {
             Tocar(somGolpe);
+            Empurrar(atacante, alvo);
         }
+    }
+
+    private void Empurrar(CombateJogador atacante, CombateJogador alvo)
+    {
+        // direção: de quem bateu para quem apanhou (o alvo é jogado para longe)
+        Vector2 direcao = alvo.transform.position - atacante.transform.position;
+        alvo.GetComponent<MovimentoJogador>().Empurrar(direcao, forcaEmpurrao, duracaoEmpurrao);
     }
 
     private void EncerrarPartida(CombateJogador vencedor, CombateJogador perdedor)

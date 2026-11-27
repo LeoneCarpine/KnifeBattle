@@ -15,6 +15,13 @@ public class MovimentoJogador : MonoBehaviour
 
     private Rigidbody2D corpo;
     private Vector2 direcao;
+
+    // empurrão: enquanto o tempo não acaba, as teclas são ignoradas
+    private Vector2 velocidadeEmpurrao;
+    private float tempoEmpurrao;
+    private float duracaoEmpurrao;
+
+    public bool SendoEmpurrado => tempoEmpurrao > 0f;
     
     //pega as dimensões do obj referenciado
     void Awake()
@@ -84,6 +91,22 @@ public class MovimentoJogador : MonoBehaviour
     //config velocidade nos intervalos da simulação física
     void FixedUpdate()
     {
+        if (SendoEmpurrado)
+        {
+            // começa com força total e vai perdendo força até parar
+            float forcaRestante = tempoEmpurrao / duracaoEmpurrao;
+            corpo.linearVelocity = velocidadeEmpurrao * forcaRestante;
+            tempoEmpurrao -= Time.fixedDeltaTime;
+            return;
+        }
+
         corpo.linearVelocity = direcao * velocidade;
+    }
+
+    public void Empurrar(Vector2 direcaoEmpurrao, float forca, float duracao)
+    {
+        velocidadeEmpurrao = direcaoEmpurrao.normalized * forca;
+        duracaoEmpurrao = duracao;
+        tempoEmpurrao = duracao;
     }
 }

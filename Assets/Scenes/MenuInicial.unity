@@ -1338,7 +1338,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuController
   fonteSom: {fileID: 1470312850}
-  somJogar: {fileID: 8300000, guid: a5e4d757a9429ba43a46db621effd116, type: 3}
+  somJogar: {fileID: 8300000, guid: 9652fe989d2a19d439bc1459ac620f38, type: 3}
   somSair: {fileID: 8300000, guid: 6a2326e60bf343e40bcab86db2be759c, type: 3}
   musica: {fileID: 2127854574}
 --- !u!82 &1470312850

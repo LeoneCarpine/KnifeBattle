@@ -28,6 +28,7 @@ public class AnimacaoPersonagem : MonoBehaviour
     private const int Frente = 0, Esquerda = 1, Direita = 2, Costas = 3;
 
     private Rigidbody2D fisica;
+    private MovimentoJogador movimento;
     private int linha = Frente;
     private int quadro;
     private float cronometro;
@@ -40,6 +41,7 @@ public class AnimacaoPersonagem : MonoBehaviour
     void Awake()
     {
         fisica = GetComponent<Rigidbody2D>();
+        movimento = GetComponent<MovimentoJogador>();
 
         // garante a ordem certa dos quadros, independente de como foram arrastados
         OrdenarPorPosicao(corpoParado);
@@ -58,7 +60,9 @@ public class AnimacaoPersonagem : MonoBehaviour
         }
 
         Vector2 velocidade = fisica.linearVelocity;
-        bool andando = velocidade.sqrMagnitude > 0.01f;
+        // durante o empurrão ele desliza pra trás sem "andar" e sem virar de costas
+        bool empurrado = movimento != null && movimento.SendoEmpurrado;
+        bool andando = !empurrado && velocidade.sqrMagnitude > 0.01f;
 
         // só atualiza a direção quando está andando,
         // assim quando para ele continua olhando pro último lado
